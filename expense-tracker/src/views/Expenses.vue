@@ -131,16 +131,16 @@ onMounted(() => {
         <form v-else @submit.prevent="saveExpense" class="expense-form">
           <div class="form-group row-group">
             <div class="field amount-field">
-              <label class="form-label">Amount ($)</label>
+              <label class="form-label">Amount (Rp)</label>
               <div class="input-wrapper">
-                <span class="currency-prefix">$</span>
+                <span class="currency-prefix">Rp</span>
                 <input 
                   v-model.number="formData.amount" 
                   type="number" 
-                  step="0.01" 
+                  step="1000" 
                   min="0"
                   class="form-control pl-8" 
-                  placeholder="0.00"
+                  placeholder="0"
                   required 
                 />
               </div>

@@ -173,7 +173,7 @@ const totalBudget = computed(() => {
           <!-- Header -->
           <div class="budget-row header">
             <div class="col-category">Category</div>
-            <div class="col-amount">Budget Amount ($)</div>
+            <div class="col-amount">Budget Amount (Rp)</div>
           </div>
           
           <!-- Rows -->
