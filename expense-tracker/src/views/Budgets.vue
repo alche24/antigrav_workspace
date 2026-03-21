@@ -2,6 +2,8 @@
 import { ref, onMounted, computed, watch } from 'vue'
 import { supabase } from '../lib/supabase'
 import { Loader2, Save, AlertCircle } from 'lucide-vue-next'
+import { formatCurrency } from '../lib/utils'
+import { currentUser } from '../lib/auth'
 
 const categories = ref([])
 const budgets = ref([])
@@ -82,7 +84,8 @@ async function saveBudgets() {
         category_id: cat.id,
         month: selectedMonth.value,
         year: selectedYear.value,
-        amount: amount
+        amount: amount,
+        user_id: currentUser.value.id
       }
       
       if (existing) {
@@ -151,7 +154,7 @@ const totalBudget = computed(() => {
       
       <div class="summary-box">
         <span class="summary-label">Total Planned Budget</span>
-        <span class="summary-val">${{ totalBudget.toFixed(2) }}</span>
+        <span class="summary-val">{{ formatCurrency(totalBudget) }}</span>
       </div>
     </div>
 
@@ -187,7 +190,7 @@ const totalBudget = computed(() => {
               <span>{{ cat.name }}</span>
             </div>
             <div class="col-amount input-wrapper">
-              <span class="currency-prefix">$</span>
+              <span class="currency-prefix">Rp</span>
               <input 
                 type="number" 
                 v-model.number="budgetInputs[cat.id]" 

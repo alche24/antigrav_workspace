@@ -1,9 +1,12 @@
 <script setup>
-import { RouterView, RouterLink, useRoute } from 'vue-router'
-import { LayoutDashboard, Receipt, PiggyBank, Tags } from 'lucide-vue-next'
+import { RouterView, RouterLink, useRoute, useRouter } from 'vue-router'
+import { LayoutDashboard, Receipt, PiggyBank, Tags, LogOut } from 'lucide-vue-next'
 import { computed } from 'vue'
+import { currentUser } from './lib/auth'
+import { supabase } from './lib/supabase'
 
 const route = useRoute()
+const router = useRouter()
 
 const navigation = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
@@ -13,12 +16,17 @@ const navigation = [
 ]
 
 const currentRoute = computed(() => route.path)
+
+async function logout() {
+  await supabase.auth.signOut()
+  router.push('/login')
+}
 </script>
 
 <template>
   <div class="app-container">
     <!-- Desktop Sidebar Navigation -->
-    <aside class="sidebar glass-card desktop-only">
+    <aside v-if="currentUser" class="sidebar glass-card desktop-only">
       <div class="brand">
         <div class="brand-icon">
           <PiggyBank size="28" color="white" />
@@ -40,16 +48,18 @@ const currentRoute = computed(() => route.path)
       </nav>
       
       <div class="user-profile">
-        <div class="avatar">U</div>
+        <div class="avatar">{{ currentUser.email?.charAt(0).toUpperCase() || 'U' }}</div>
         <div class="user-info">
-          <span class="user-name">User Account</span>
-          <span class="user-email">guest@aurabudget</span>
+          <span class="user-email">{{ currentUser.email }}</span>
         </div>
+        <button @click="logout" class="logout-btn" title="Log Out">
+          <LogOut size="18" />
+        </button>
       </div>
     </aside>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="mobile-nav glass-card mobile-only">
+    <nav v-if="currentUser" class="mobile-nav glass-card mobile-only">
       <RouterLink 
         v-for="item in navigation" 
         :key="item.name" 
@@ -60,10 +70,14 @@ const currentRoute = computed(() => route.path)
         <component :is="item.icon" size="24" />
         <span class="mobile-nav-label">{{ item.name }}</span>
       </RouterLink>
+      <button @click="logout" class="mobile-nav-item logout-btn-mobile">
+        <LogOut size="24" />
+        <span class="mobile-nav-label">Logout</span>
+      </button>
     </nav>
 
     <!-- Main Content Area -->
-    <main class="main-content animate-fade-in">
+    <main class="main-content animate-fade-in" :class="{ 'full-width': !currentUser }">
       <RouterView />
     </main>
   </div>
@@ -160,27 +174,46 @@ const currentRoute = computed(() => route.path)
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--bg-secondary);
+  background: var(--accent-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: var(--text-primary);
+  color: white;
+  flex-shrink: 0;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
-}
-
-.user-name {
-  font-size: 0.9rem;
-  font-weight: 600;
+  flex: 1;
+  overflow: hidden;
 }
 
 .user-email {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
 }
 
 /* Mobile Nav Styles */
@@ -219,6 +252,22 @@ const currentRoute = computed(() => route.path)
   font-weight: 500;
 }
 
+.logout-btn-mobile {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.logout-btn-mobile:hover {
+  color: var(--danger);
+}
+
 /* Responsive Display Classes */
 .desktop-only {
   display: none;
@@ -234,6 +283,14 @@ const currentRoute = computed(() => route.path)
   }
   .mobile-only {
     display: none;
+  }
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
+  .main-content.full-width {
+    margin-left: 0;
+    width: 100%;
   }
 }
 </style>

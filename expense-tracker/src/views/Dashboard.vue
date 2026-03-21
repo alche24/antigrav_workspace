@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { supabase } from '../lib/supabase'
-import { Loader2, TrendingUp, TrendingDown, DollarSign } from 'lucide-vue-next'
+import { Loader2, TrendingUp, TrendingDown, Banknote } from 'lucide-vue-next'
+import { formatCurrency } from '../lib/utils'
 
 const loading = ref(true)
 const categories = ref([])
@@ -142,11 +143,11 @@ const overallPercentage = computed(() => totalBudget.value > 0 ? Math.min(100, (
       <div class="overview-cards">
         <div class="glass-card stat-card primary-gradient">
           <div class="stat-icon-wrapper">
-            <DollarSign size="24" />
+            <Banknote size="24" />
           </div>
           <div class="stat-details">
             <span class="stat-label">Total Spent</span>
-            <span class="stat-value">${{ totalSpent.toFixed(2) }}</span>
+            <span class="stat-value">{{ formatCurrency(totalSpent) }}</span>
           </div>
         </div>
         
@@ -156,7 +157,7 @@ const overallPercentage = computed(() => totalBudget.value > 0 ? Math.min(100, (
           </div>
           <div class="stat-details">
             <span class="stat-label">Total Budget</span>
-            <span class="stat-value">${{ totalBudget.toFixed(2) }}</span>
+            <span class="stat-value">{{ formatCurrency(totalBudget) }}</span>
           </div>
         </div>
 
@@ -168,7 +169,7 @@ const overallPercentage = computed(() => totalBudget.value > 0 ? Math.min(100, (
           <div class="stat-details">
             <span class="stat-label">{{ totalRemaining >= 0 ? 'Remaining' : 'Over Budget' }}</span>
             <span class="stat-value" :class="{ 'text-danger': totalRemaining < 0 }">
-              ${{ Math.abs(totalRemaining).toFixed(2) }}
+              {{ formatCurrency(Math.abs(totalRemaining)) }}
             </span>
           </div>
         </div>
@@ -210,9 +211,9 @@ const overallPercentage = computed(() => totalBudget.value > 0 ? Math.min(100, (
               <span>{{ stat.name }}</span>
             </div>
             <div class="cat-amounts">
-              <span class="spent font-bold">${{ stat.spent.toFixed(2) }}</span>
+              <span class="spent font-bold">{{ formatCurrency(stat.spent) }}</span>
               <span class="separator">/</span>
-              <span class="budget text-muted">${{ stat.budget.toFixed(2) }}</span>
+              <span class="budget text-muted">{{ formatCurrency(stat.budget) }}</span>
             </div>
           </div>
           
@@ -228,10 +229,10 @@ const overallPercentage = computed(() => totalBudget.value > 0 ? Math.min(100, (
           
           <div class="cat-footer">
             <span v-if="stat.isOver" class="text-danger over-tag">
-              ${{ Math.abs(stat.remaining).toFixed(2) }} Over Budget
+              {{ formatCurrency(Math.abs(stat.remaining)) }} Over Budget
             </span>
             <span v-else class="text-emerald over-tag">
-              ${{ stat.remaining.toFixed(2) }} Remaining
+              {{ formatCurrency(stat.remaining) }} Remaining
             </span>
             
             <span class="pct-text">{{ stat.percentage.toFixed(0) }}%</span>

@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { supabase } from '../lib/supabase'
 import { Plus, Trash2, Loader2, Calendar } from 'lucide-vue-next'
+import { formatCurrency } from '../lib/utils'
+import { currentUser } from '../lib/auth'
 
 const expenses = ref([])
 const categories = ref([])
@@ -67,7 +69,8 @@ async function saveExpense() {
         amount: parseFloat(formData.value.amount),
         category_id: formData.value.category_id,
         expense_date: formData.value.expense_date,
-        description: formData.value.description
+        description: formData.value.description,
+        user_id: currentUser.value.id
       }])
       
     if (error) throw error
@@ -214,7 +217,7 @@ onMounted(() => {
             <div class="exp-details">
               <div class="exp-header">
                 <span class="exp-cat">{{ exp.categories?.name || 'Uncategorized' }}</span>
-                <span class="exp-amount">${{ parseFloat(exp.amount).toFixed(2) }}</span>
+                <span class="exp-amount">{{ formatCurrency(exp.amount) }}</span>
               </div>
               <div class="exp-meta">
                 <span class="exp-desc">{{ exp.description || 'No description' }}</span>

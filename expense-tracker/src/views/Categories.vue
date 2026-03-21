@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '../lib/supabase'
 import { Plus, Trash2, Edit2, Loader2 } from 'lucide-vue-next'
+import { currentUser } from '../lib/auth'
 
 const categories = ref([])
 const loading = ref(true)
@@ -56,7 +57,8 @@ async function saveCategory() {
         .from('categories')
         .insert([{ 
           name: formData.value.name,
-          color: formData.value.color
+          color: formData.value.color,
+          user_id: currentUser.value.id
         }])
       if (error) throw error
     }
