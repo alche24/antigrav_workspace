@@ -31,7 +31,7 @@ async function logout() {
         <div class="brand-icon">
           <PiggyBank size="28" color="white" />
         </div>
-        <span class="brand-text">Aura<strong>Budget</strong></span>
+        <span class="brand-text">W.E.L.L.Y <strong>Accounting</strong></span>
       </div>
       
       <nav class="nav-menu">

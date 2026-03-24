@@ -49,7 +49,7 @@ async function handleAuth() {
   <div class="auth-container">
     <div class="glass-card auth-card animate-fade-in">
       <div class="auth-header">
-        <h1 class="brand-title">Aura<strong>Budget</strong></h1>
+        <h1 class="brand-title">W.E.L.L.Y <strong>Accounting</strong></h1>
         <p class="auth-subtitle">{{ isLogin ? 'Welcome back' : 'Create your account' }}</p>
       </div>
 
